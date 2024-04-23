@@ -11,6 +11,7 @@
 #include "BoundingSphere.h"
 #include "GUILabel.h"
 #include "Explosion.h"
+#include "Powerup.h"
 
 // PUBLIC INSTANCE CONSTRUCTORS ///////////////////////////////////////////////
 
@@ -63,6 +64,7 @@ void Asteroids::Start()
 
 	// Create a spaceship and add it to the world
 	mGameWorld->AddObject(CreateSpaceship());
+	
 	// Create some asteroids and add them to the world
 	CreateAsteroids(10);
 
@@ -100,6 +102,8 @@ void Asteroids::OnKeyPressed(uchar key, int x, int y)
 
 			mScoreKeeper.mScore = 0;
 			mPlayer.mLives = 3;
+
+			CreatePowerup();
 		
 		}
 		
@@ -159,6 +163,19 @@ void Asteroids::OnObjectRemoved(GameWorld* world, shared_ptr<GameObject> object)
 			SetTimer(500, START_NEXT_LEVEL); 
 		}
 	}
+
+	if (object->GetType() == GameObjectType("Powerup"))
+	{
+		
+		mPlayer.mLives++;
+		std::ostringstream msg_stream;
+		msg_stream << "Lives: " << mPlayer.mLives;
+		std::string lives_msg = msg_stream.str();
+		mLivesLabel->SetText(lives_msg);
+
+		SetTimer(rand() % 10000 + 3000, CREATE_POWERUP);
+	}
+
 }
 
 // PUBLIC INSTANCE METHODS IMPLEMENTING ITimerListener ////////////////////////
@@ -181,6 +198,11 @@ void Asteroids::OnTimer(int value)
 	if (value == SHOW_GAME_OVER)
 	{
 		mGameOverLabel->SetVisible(true);
+	}
+
+	if (value == CREATE_POWERUP)
+	{
+		CreatePowerup();
 	}
 
 }
@@ -221,6 +243,13 @@ void Asteroids::CreateAsteroids(const uint num_asteroids)
 		asteroid->SetScale(0.2f);
 		mGameWorld->AddObject(asteroid);
 	}
+}
+
+void Asteroids::CreatePowerup()
+{
+	mPowerup = make_shared<Powerup>();
+	mPowerup->SetBoundingShape(make_shared<BoundingSphere>(mPowerup->GetThisPtr(), 10.0f));
+	mGameWorld->AddObject(mPowerup);
 }
 
 void Asteroids::CreateGUI()

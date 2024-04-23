@@ -14,6 +14,8 @@ class GameObject;
 class Spaceship;
 class GUILabel;
 
+class Powerup;
+
 class Asteroids : public GameSession, public IKeyboardListener, public IGameWorldListener, public IScoreListener, public IPlayerListener
 {
 public:
@@ -72,6 +74,10 @@ private:
 	Player mPlayer;
 
 	bool mGameStarted;
+
+	shared_ptr<Powerup> mPowerup;
+	void CreatePowerup();
+	const static uint CREATE_POWERUP = 3;
 
 };
 
