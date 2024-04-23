@@ -20,6 +20,9 @@ Asteroids::Asteroids(int argc, char *argv[])
 {
 	mLevel = 0;
 	mAsteroidCount = 0;
+
+	mGameStarted = false;
+
 }
 
 /** Destructor. */
@@ -90,6 +93,16 @@ void Asteroids::OnKeyPressed(uchar key, int x, int y)
 	switch (key)
 	{
 	case ' ':
+		
+		if (!mGameStarted) {
+			mGameStarted = true;
+			mStartGameLabel->SetVisible(false);
+
+			mScoreKeeper.mScore = 0;
+			mPlayer.mLives = 3;
+		
+		}
+		
 		mSpaceship->Shoot();
 		break;
 	default:
@@ -243,6 +256,21 @@ void Asteroids::CreateGUI()
 	shared_ptr<GUIComponent> game_over_component
 		= static_pointer_cast<GUIComponent>(mGameOverLabel);
 	mGameDisplay->GetContainer()->AddComponent(game_over_component, GLVector2f(0.5f, 0.5f));
+
+
+	// Create a new GUILabel and wrap it up in a shared_ptr
+	mStartGameLabel = shared_ptr<GUILabel>(new GUILabel("PRESS SPACE TO START"));
+	// Set the horizontal alignment of the label to GUI_HALIGN_CENTER
+	mStartGameLabel->SetHorizontalAlignment(GUIComponent::GUI_HALIGN_CENTER);
+	// Set the vertical alignment of the label to GUI_VALIGN_MIDDLE
+	mStartGameLabel->SetVerticalAlignment(GUIComponent::GUI_VALIGN_MIDDLE);
+	// Set the visibility of the label to true (visible)
+	mStartGameLabel->SetVisible(true);
+	// Add the GUILabel to the GUIContainer  
+	shared_ptr<GUIComponent> start_component
+		= static_pointer_cast<GUIComponent>(mStartGameLabel);
+	mGameDisplay->GetContainer()->AddComponent(start_component, GLVector2f(0.5f, 0.5f));
+
 
 }
 

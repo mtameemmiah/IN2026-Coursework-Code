@@ -53,6 +53,8 @@ private:
 	shared_ptr<GUILabel> mLivesLabel;
 	shared_ptr<GUILabel> mGameOverLabel;
 
+	shared_ptr<GUILabel> mStartGameLabel;
+
 	uint mLevel;
 	uint mAsteroidCount;
 
@@ -68,6 +70,9 @@ private:
 
 	ScoreKeeper mScoreKeeper;
 	Player mPlayer;
+
+	bool mGameStarted;
+
 };
 
 #endif
