@@ -75,14 +75,14 @@ private:
 	ScoreKeeper mScoreKeeper;
 	Player mPlayer;
 
-	bool mGameStarted;
+	bool mGameStarted; //cwheck if game has started
 
 	shared_ptr<Powerup> mPowerup;
-	void CreatePowerup();
+	void CreatePowerup();                    //powerup 
 	const static uint CREATE_POWERUP = 3;
 
 	shared_ptr<DemoSpaceship> mDemoSpaceship;
-	shared_ptr<GameObject>CreateDemoSpaceship();
+	shared_ptr<GameObject>CreateDemoSpaceship();  //demo mode
 	const static uint DEMOSPACESHIP_CREATE = 4;
 	const static uint DEMOSPACESHIP_CONTROL = 5;
 	

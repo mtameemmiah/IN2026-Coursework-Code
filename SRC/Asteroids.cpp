@@ -61,6 +61,7 @@ void Asteroids::Start()
 
 	Animation *explosion_anim = AnimationManager::GetInstance().CreateAnimationFromFile("explosion", 64, 1024, 64, 64, "explosion_fs.png");
 	Animation *asteroid1_anim = AnimationManager::GetInstance().CreateAnimationFromFile("asteroid1", 128, 8192, 128, 128, "asteroid1_fs.png");
+//	Animation *asteroid2_anim = AnimationManager::GetInstance().CreateAnimationFromFile("powerup1", 128, 8192, 128, 128, "powerup_fs.png");
 	Animation *spaceship_anim = AnimationManager::GetInstance().CreateAnimationFromFile("spaceship", 128, 128, 128, 128, "spaceship_fs.png");
 
 	// Create a spaceship and add it to the world
@@ -71,7 +72,7 @@ void Asteroids::Start()
 	SetTimer(500, DEMOSPACESHIP_CONTROL);
 
 	// Create some asteroids and add them to the world
-	CreateAsteroids(10);
+	CreateAsteroids(5);
 
 	//Create the GUI
 	CreateGUI();
@@ -104,19 +105,15 @@ void Asteroids::OnKeyPressed(uchar key, int x, int y)
 		if (!mGameStarted) {
 			mGameStarted = true;
 			mStartGameLabel->SetVisible(false);
+			
+			mScoreKeeper.mScore = 0;    
+			mPlayer.mLives = 3;          //reset stats
+			
+			CreatePowerup();  //add powerup
+			
+			mGameWorld->FlagForRemoval(mDemoSpaceship);  //remove demoship
 
-			//reset stats
-			mScoreKeeper.mScore = 0;
-			mPlayer.mLives = 3;
-
-			//add powerup
-			CreatePowerup();
-
-			//remove demoship
-			mGameWorld->FlagForRemoval(mDemoSpaceship);
-
-			//spawn in plaeyrs spaceship
-			mGameWorld->AddObject(CreateSpaceship());
+			mGameWorld->AddObject(CreateSpaceship());   //spawn in plaeyrs spaceship
 		
 		}
 		
@@ -179,7 +176,6 @@ void Asteroids::OnObjectRemoved(GameWorld* world, shared_ptr<GameObject> object)
 
 	if (object->GetType() == GameObjectType("Powerup"))
 	{
-		
 		mPlayer.mLives++;
 		std::ostringstream msg_stream;
 		msg_stream << "Lives: " << mPlayer.mLives;
@@ -237,7 +233,7 @@ void Asteroids::OnTimer(int value)
 		}
 	}
 
-	//demo ship ai 
+
 	if (value == DEMOSPACESHIP_CONTROL)
 	{
 		if (!mGameStarted)
@@ -291,6 +287,10 @@ void Asteroids::CreateAsteroids(const uint num_asteroids)
 
 void Asteroids::CreatePowerup()
 {
+//	Animation* anim_ptr = AnimationManager::GetInstance().GetAnimationByName("powerup1");
+//	shared_ptr<Sprite> powerup1_sprite
+//		= make_shared<Sprite>(anim_ptr->GetWidth(), anim_ptr->GetHeight(), anim_ptr);
+//	powerup1_sprite->SetLoopAnimation(true);
 	mPowerup = make_shared<Powerup>();
 	mPowerup->SetBoundingShape(make_shared<BoundingSphere>(mPowerup->GetThisPtr(), 10.0f));
 	mGameWorld->AddObject(mPowerup);
@@ -310,7 +310,7 @@ shared_ptr<GameObject> Asteroids::CreateDemoSpaceship()
 	mDemoSpaceship->SetSprite(spaceship_sprite);
 	mDemoSpaceship->SetScale(0.1f);
 	// spawn spaceship in random spot of the world
-	mDemoSpaceship->SetPosition(GLVector3f((rand() % 25 - 25), (rand() % 25 - 25), 0));
+	mDemoSpaceship->SetPosition(GLVector3f((rand() % 30 - 30), (rand() % 30 - 30), 0));
 	// return DemoSpaceship so it can be added to the world
 	return mDemoSpaceship;
 

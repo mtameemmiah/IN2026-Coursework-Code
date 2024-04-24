@@ -21,21 +21,23 @@ Powerup::~Powerup(void)
 {
 }
 
+
 void Powerup::Render(void)
 {
-	glBegin(GL_LINE_LOOP);
+	GLfloat r = 3.;
+
+	glBegin(GL_POLYGON);
 	
-	glColor3f(0.0, 1.0, 1.0);
+	glColor3f(1.0, 0.0, 1.0);
 	
-	glVertex3f(-4, -4, 0.0);
-	glVertex3f(-4, 4, 0.0);
-	glVertex3f(4, 4, 0.0);
-	glVertex3f(4, -4, 0.0);
+	for (float phi = 0; phi <= 2 * M_PI; phi += M_PI / 10.)
+		glVertex3f(r * cos(phi), r * sin(phi), 0.);
 	
 	glEnd();
 
 	glEnable(GL_LIGHTING);
 }
+
 
 bool Powerup::CollisionTest(shared_ptr<GameObject> o)
 {
