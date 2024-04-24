@@ -25,12 +25,12 @@ void Powerup::Render(void)
 {
 	glBegin(GL_LINE_LOOP);
 	
-	glColor3f(0.0, 0.0, 1.0);
+	glColor3f(0.0, 1.0, 1.0);
 	
-	glVertex3f(-3, -3, 0.0);
-	glVertex3f(-3, 3, 0.0);
-	glVertex3f(3, 3, 0.0);
-	glVertex3f(3, -3, 0.0);
+	glVertex3f(-4, -4, 0.0);
+	glVertex3f(-4, 4, 0.0);
+	glVertex3f(4, 4, 0.0);
+	glVertex3f(4, -4, 0.0);
 	
 	glEnd();
 

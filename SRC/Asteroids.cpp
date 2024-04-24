@@ -12,6 +12,7 @@
 #include "GUILabel.h"
 #include "Explosion.h"
 #include "Powerup.h"
+#include "DemoSpaceship.h"
 
 // PUBLIC INSTANCE CONSTRUCTORS ///////////////////////////////////////////////
 
@@ -63,8 +64,12 @@ void Asteroids::Start()
 	Animation *spaceship_anim = AnimationManager::GetInstance().CreateAnimationFromFile("spaceship", 128, 128, 128, 128, "spaceship_fs.png");
 
 	// Create a spaceship and add it to the world
-	mGameWorld->AddObject(CreateSpaceship());
+	//mGameWorld->AddObject(CreateSpaceship());
 	
+	//create a demospaceship and add it to the world
+	mGameWorld->AddObject(CreateDemoSpaceship());
+	SetTimer(500, DEMOSPACESHIP_AI);
+
 	// Create some asteroids and add them to the world
 	CreateAsteroids(10);
 
@@ -100,10 +105,18 @@ void Asteroids::OnKeyPressed(uchar key, int x, int y)
 			mGameStarted = true;
 			mStartGameLabel->SetVisible(false);
 
+			//reset stats
 			mScoreKeeper.mScore = 0;
 			mPlayer.mLives = 3;
 
+			//add powerup
 			CreatePowerup();
+
+			//remove demoship
+			mGameWorld->FlagForRemoval(mDemoSpaceship);
+
+			//spawn in plaeyrs spaceship
+			mGameWorld->AddObject(CreateSpaceship());
 		
 		}
 		
@@ -176,6 +189,16 @@ void Asteroids::OnObjectRemoved(GameWorld* world, shared_ptr<GameObject> object)
 		SetTimer(rand() % 10000 + 3000, CREATE_POWERUP);
 	}
 
+	if (object->GetType() == GameObjectType("DemoSpaceship"))
+	{
+		shared_ptr<GameObject> explosion = CreateExplosion();
+		explosion->SetPosition(mDemoSpaceship->GetPosition());
+		explosion->SetRotation(mDemoSpaceship->GetRotation());
+		mGameWorld->AddObject(explosion);
+		
+		SetTimer(500, DEMOSPACESHIP_CREATE);
+	}
+
 }
 
 // PUBLIC INSTANCE METHODS IMPLEMENTING ITimerListener ////////////////////////
@@ -200,9 +223,30 @@ void Asteroids::OnTimer(int value)
 		mGameOverLabel->SetVisible(true);
 	}
 
+
 	if (value == CREATE_POWERUP)
 	{
 		CreatePowerup();
+	}
+
+	if (value == DEMOSPACESHIP_CREATE)
+	{
+		if (!mGameStarted)
+		{
+			mGameWorld->AddObject(CreateDemoSpaceship());
+		}
+	}
+
+	//demo ship ai 
+	if (value == DEMOSPACESHIP_AI)
+	{
+		if (!mGameStarted)
+		{
+			mDemoSpaceship->Thrust(rand() % 20 + (0));
+			mDemoSpaceship->Rotate(rand() % 180 - (120));
+			mDemoSpaceship->Shoot();
+			SetTimer(600, DEMOSPACESHIP_AI);
+		}
 	}
 
 }
@@ -250,6 +294,26 @@ void Asteroids::CreatePowerup()
 	mPowerup = make_shared<Powerup>();
 	mPowerup->SetBoundingShape(make_shared<BoundingSphere>(mPowerup->GetThisPtr(), 10.0f));
 	mGameWorld->AddObject(mPowerup);
+}
+
+shared_ptr<GameObject> Asteroids::CreateDemoSpaceship()
+{
+	// Create a raw pointer to a spaceship that can be converted to 
+	// shared_ptrs of different types because GameWorld implements IRefCount
+	mDemoSpaceship = make_shared<DemoSpaceship>();
+	mDemoSpaceship->SetBoundingShape(make_shared<BoundingSphere>(mDemoSpaceship->GetThisPtr(), 4.0f));
+	shared_ptr<Shape> bullet_shape = make_shared<Shape>("bullet.shape");
+	mDemoSpaceship->SetDemoBulletShape(bullet_shape);
+	Animation* anim_ptr = AnimationManager::GetInstance().GetAnimationByName("spaceship");
+	shared_ptr<Sprite> spaceship_sprite =
+		make_shared<Sprite>(anim_ptr->GetWidth(), anim_ptr->GetHeight(), anim_ptr);
+	mDemoSpaceship->SetSprite(spaceship_sprite);
+	mDemoSpaceship->SetScale(0.1f);
+	// spawn spaceship in random spot of the world
+	mDemoSpaceship->SetPosition(GLVector3f((rand() % 25 - 25), (rand() % 25 - 25), 0));
+	// return DemoSpaceship so it can be added to the world
+	return mDemoSpaceship;
+
 }
 
 void Asteroids::CreateGUI()
