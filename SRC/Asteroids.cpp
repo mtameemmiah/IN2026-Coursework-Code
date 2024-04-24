@@ -68,7 +68,7 @@ void Asteroids::Start()
 	
 	//create a demospaceship and add it to the world
 	mGameWorld->AddObject(CreateDemoSpaceship());
-	SetTimer(500, DEMOSPACESHIP_AI);
+	SetTimer(500, DEMOSPACESHIP_CONTROL);
 
 	// Create some asteroids and add them to the world
 	CreateAsteroids(10);
@@ -238,14 +238,14 @@ void Asteroids::OnTimer(int value)
 	}
 
 	//demo ship ai 
-	if (value == DEMOSPACESHIP_AI)
+	if (value == DEMOSPACESHIP_CONTROL)
 	{
 		if (!mGameStarted)
 		{
 			mDemoSpaceship->Thrust(rand() % 20 + (0));
 			mDemoSpaceship->Rotate(rand() % 180 - (120));
 			mDemoSpaceship->Shoot();
-			SetTimer(600, DEMOSPACESHIP_AI);
+			SetTimer(600, DEMOSPACESHIP_CONTROL);
 		}
 	}
 

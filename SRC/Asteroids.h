@@ -84,7 +84,7 @@ private:
 	shared_ptr<DemoSpaceship> mDemoSpaceship;
 	shared_ptr<GameObject>CreateDemoSpaceship();
 	const static uint DEMOSPACESHIP_CREATE = 4;
-	const static uint DEMOSPACESHIP_AI = 5;
+	const static uint DEMOSPACESHIP_CONTROL = 5;
 	
 
 };
